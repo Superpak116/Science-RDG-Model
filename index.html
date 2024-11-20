@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rabbit, Dingo, and Grasshopper Simulation</title>
+    <title>Rabbit and Dingo Population Simulation</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Rabbit, Dingo, and Grasshopper Simulation</h1>
+    <h1>Rabbit and Dingo Population Simulation</h1>
 
     <div class="controls">
         <div class="control">
@@ -28,13 +28,18 @@
         </div>
         <div class="control">
             <label for="initialGrasshoppers">Initial Number of Grasshoppers:</label>
-            <input type="range" id="initialGrasshoppers" name="initialGrasshoppers" min="1" max="50" value="20" oninput="updateInitialGrasshoppers(this.value)">
-            <span id="initialGrasshoppersValue">20</span>
+            <input type="range" id="initialGrasshoppers" name="initialGrasshoppers" min="1" max="50" value="10" oninput="updateInitialGrasshoppers(this.value)">
+            <span id="initialGrasshoppersValue">10</span>
         </div>
         <div class="control">
             <label for="predationRate">Predation Rate (% of rabbits eaten):</label>
             <input type="range" id="predationRate" name="predationRate" min="0" max="17" value="8" oninput="updatePredationRate(this.value)">
             <span id="predationRateValue">8%</span>
+        </div>
+        <div class="control">
+            <label for="grasshopperPredationRate">Grasshopper Predation Rate (% of grasshoppers eaten by rabbits):</label>
+            <input type="range" id="grasshopperPredationRate" name="grasshopperPredationRate" min="0" max="100" value="50" oninput="updateGrasshopperPredationRate(this.value)">
+            <span id="grasshopperPredationRateValue">50%</span>
         </div>
     </div>
 
