@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rabbit, Dingo, and Grasshopper Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Rabbit, Dingo, and Grasshopper Simulation</h1>
+
+    <div class="controls">
+        <div class="control">
+            <label for="grassGrowth">Grass Growth per Season:</label>
+            <input type="range" id="grassGrowth" name="grassGrowth" min="1" max="50" value="12" oninput="updateGrassGrowth(this.value)">
+            <span id="grassGrowthValue">12</span>
+        </div>
+        <div class="control">
+            <label for="initialRabbits">Initial Number of Rabbits:</label>
+            <input type="range" id="initialRabbits" name="initialRabbits" min="1" max="50" value="10" oninput="updateInitialRabbits(this.value)">
+            <span id="initialRabbitsValue">10</span>
+        </div>
+        <div class="control">
+            <label for="initialDingoes">Initial Number of Dingoes:</label>
+            <input type="range" id="initialDingoes" name="initialDingoes" min="1" max="50" value="5" oninput="updateInitialDingoes(this.value)">
+            <span id="initialDingoesValue">5</span>
+        </div>
+        <div class="control">
+            <label for="initialGrasshoppers">Initial Number of Grasshoppers:</label>
+            <input type="range" id="initialGrasshoppers" name="initialGrasshoppers" min="1" max="50" value="20" oninput="updateInitialGrasshoppers(this.value)">
+            <span id="initialGrasshoppersValue">20</span>
+        </div>
+        <div class="control">
+            <label for="predationRate">Predation Rate (% of rabbits eaten):</label>
+            <input type="range" id="predationRate" name="predationRate" min="0" max="17" value="8" oninput="updatePredationRate(this.value)">
+            <span id="predationRateValue">8%</span>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button id="startButton" onclick="startSimulation()">Start Simulation</button>
+        <button id="stopButton" onclick="stopSimulation()" style="display:none;">Stop</button>
+        <button id="resetButton" onclick="resetSimulation()" style="display:none;">Reset</button>
+    </div>
+
+    <canvas id="populationChart"></canvas>
+
+    <div class="stats">
+        <p><strong>Season:</strong> <span id="seasonDisplay">0</span></p>
+        <p><strong>Rabbit Population:</strong> <span id="rabbitCountDisplay">0</span></p>
+        <p><strong>Dingo Population:</strong> <span id="dingoCountDisplay">0</span></p>
+        <p><strong>Grasshopper Population:</strong> <span id="grasshopperCountDisplay">0</span></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
