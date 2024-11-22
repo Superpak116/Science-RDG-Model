@@ -52,6 +52,11 @@
             </section>
 
             <section class="simulation">
+                <div class="button-container">
+                    <button id="startButton" onclick="startSimulation()">▶️ Start</button>
+                    <button id="stopButton" onclick="stopSimulation()" style="display:none;">⏸️ Pause</button>
+                    <button id="resetButton" onclick="resetSimulation()" style="display:none;">🔄 Reset</button>
+                </div>
                 <h2>📊 Population Dynamics</h2>
                 <canvas id="populationChart"></canvas>
             </section>
@@ -63,12 +68,6 @@
                 <div class="stat"><span>🐕 Dingo Population:</span> <strong id="dingoCountDisplay">0</strong></div>
                 <div class="stat"><span>🦗 Grasshopper Population:</span> <strong id="grasshopperCountDisplay">0</strong></div>
             </section>
-
-            <div class="button-container">
-                <button id="startButton" onclick="startSimulation()">▶️ Start</button>
-                <button id="stopButton" onclick="stopSimulation()" style="display:none;">⏸️ Pause</button>
-                <button id="resetButton" onclick="resetSimulation()" style="display:none;">🔄 Reset</button>
-            </div>
         </main>
     </div>
 
