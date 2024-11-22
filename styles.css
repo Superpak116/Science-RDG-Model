@@ -109,10 +109,6 @@ canvas {
 }
 
 /* Buttons */
-.button-container {
-    margin-bottom: 20px;
-}
-
 .button-container button {
     font-size: 1rem;
     margin: 10px 5px;
@@ -135,7 +131,80 @@ canvas {
     cursor: not-allowed;
 }
 
-/* Animation */
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 50%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #6c5ce7;
+}
+
+.modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 1rem;
+    color: #2d3436;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #6c5ce7;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.modal-content button:hover {
+    background-color: #a29bfe;
+}
+
+/* Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Animations */
 @keyframes pop-in {
     from {
         transform: scale(0.9);
@@ -143,6 +212,15 @@ canvas {
     }
     to {
         transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
         opacity: 1;
     }
 }
