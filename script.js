@@ -1,19 +1,10 @@
-const totalSeasonsDefault = 50;
-let totalSeasons = totalSeasonsDefault;
-
+const totalSeasons = 50;
 let predationRate = 8;
-let grasshopperPredationRate = 5;
+let grasshopperPredationRate = 50; // Percentage of grasshoppers eaten by rabbits
 let initialRabbits = 10;
 let initialDingoes = 5;
 let initialGrasshoppers = 10;
 let grassGrowth = 12;
-
-let rabbitDeathThreshold = 3;
-let dingoDeathThreshold = 0;
-let grasshopperDeathThreshold = 2;
-let rabbitReproductionThreshold = 7;
-let dingoReproductionThreshold = 15;
-
 let simulationRunning = false;
 let currentSeason = 0;
 
@@ -55,59 +46,74 @@ function updateGrassGrowth(value) {
 
 function simulateSeason(season) {
     // Grasshoppers eat grass
-    let grassEnergy = grassGrowth / Math.max(1, grasshoppers.length);
-    grasshoppers = grasshoppers.map(g => g + grassEnergy - 1);
-    grasshoppers = grasshoppers.map(g => g < grasshopperDeathThreshold ? 0 : g);
+    grasshoppers = grasshoppers.map(g => g + grassGrowth - 2); // Grasshoppers gain from grass but lose energy
+    grasshoppers = grasshoppers.map(g => g > 3 ? g : 0); // Grasshoppers below energy threshold die
 
-    // Grasshoppers reproduce
+    let grasshopperCount = grasshoppers.filter(g => g > 0).length;
+
+    // Grasshoppers reproduce (restricted reproduction)
     let newGrasshoppers = [];
     grasshoppers.forEach(g => {
-        if (g > 6) newGrasshoppers.push(Math.floor(g / 2));
+        if (g > 8 && Math.random() < 0.3) { // Reproduce only if energy > 8 and 30% chance
+            newGrasshoppers.push(3); // Each reproducing grasshopper adds 3 offspring
+        }
     });
     grasshoppers = grasshoppers.concat(newGrasshoppers);
 
-    // Rabbits eat grasshoppers
-    let rabbitEnergy = grasshoppers.filter(g => g > 0).length * (grasshopperPredationRate / 100);
-    rabbits = rabbits.map(r => r + rabbitEnergy - 1);
-    rabbits = rabbits.map(r => r < rabbitDeathThreshold ? 0 : r);
+    // Grasshoppers die off naturally (natural death rate)
+    grasshoppers = grasshoppers.filter(() => Math.random() > 0.1); // 10% of grasshoppers die each season
 
-    // Rabbits reproduce
+    // Grasshoppers overcrowding (reduce population if above a threshold)
+    if (grasshoppers.length > 100) {
+        grasshoppers = grasshoppers.slice(0, 100); // Cap population to 100
+    }
+
+    // Rabbits eat grasshoppers based on the predation rate
+    let grasshoppersEaten = Math.floor(grasshopperCount * (grasshopperPredationRate / 100));
+    grasshoppers = grasshoppers.map((g, i) => (i < grasshoppersEaten ? 0 : g)); // Reduce grasshopper population
+    rabbits = rabbits.map(r => r + (grasshoppersEaten > 0 ? 1.5 : 0) - 1); // Rabbits gain more energy (1.5) from grasshoppers but lose energy each season
+    rabbits = rabbits.filter(r => r > 0); // Remove dead rabbits
+
+    let rabbitCount = rabbits.length;
+
+    // Natural rabbit deaths
+    rabbits = rabbits.filter(() => Math.random() > 0.02); // 2% of rabbits die naturally each season
+
+    // Rabbits reproduce (lower reproduction threshold)
     let newRabbits = [];
     rabbits.forEach(r => {
-        if (r > rabbitReproductionThreshold) newRabbits.push(Math.floor(r / 2));
+        if (r > 8) { // Reproduction threshold reduced to >8
+            newRabbits.push(Math.floor(r / 2));
+        }
     });
     rabbits = rabbits.concat(newRabbits);
 
     // Dingoes eat rabbits
-    let rabbitsEaten = Math.floor(rabbits.filter(r => r > 0).length * (predationRate / 100));
+    let rabbitsEaten = Math.floor(rabbitCount * (predationRate / 100));
     let energyFromRabbits = 0;
 
     for (let i = 0; i < rabbitsEaten; i++) {
-        let index = rabbits.findIndex(r => r > 0);
-        if (index !== -1) {
-            energyFromRabbits += rabbits[index];
-            rabbits[index] = 0;
+        if (rabbits[i]) {
+            energyFromRabbits += rabbits[i];
+            rabbits[i] = 0;
         }
     }
+    rabbits = rabbits.filter(r => r > 0);
 
-    // Dingoes gain energy and reproduce
     let energyPerDingo = energyFromRabbits / dingoes.length;
-    dingoes = dingoes.map(d => d + energyPerDingo - 1);
-    dingoes = dingoes.filter(d => d > dingoDeathThreshold);
+    dingoes = dingoes.map(d => d + energyPerDingo - 1); // Dingoes lose energy if not eating enough rabbits
+    dingoes = dingoes.filter(d => d > 0); // Remove dead dingoes
 
+    let dingoCount = dingoes.length;
+
+    // Dingoes reproduce
     let newDingoes = [];
     dingoes.forEach(d => {
-        if (d > dingoReproductionThreshold) newDingoes.push(Math.floor(d / 2));
+        if (d > 15) newDingoes.push(Math.floor(d / 2));
     });
     dingoes = dingoes.concat(newDingoes);
 
-    // Save data for chart
-    populationData.push({
-        season,
-        rabbits: rabbits.filter(r => r > 0).length,
-        dingoes: dingoes.length,
-        grasshoppers: grasshoppers.filter(g => g > 0).length,
-    });
+    populationData.push({ season, rabbits: rabbits.length, dingoes: dingoCount, grasshoppers: grasshoppers.length });
 }
 
 function startSimulation() {
@@ -116,9 +122,9 @@ function startSimulation() {
     document.getElementById('stopButton').style.display = 'inline';
     document.getElementById('resetButton').style.display = 'inline';
 
-    rabbits = Array.from({ length: initialRabbits }, () => 6);
-    dingoes = Array.from({ length: initialDingoes }, () => 10);
-    grasshoppers = Array.from({ length: initialGrasshoppers }, () => 4);
+    rabbits = Array.from({ length: initialRabbits }, () => 6); // Rabbits start with energy of 6
+    dingoes = Array.from({ length: initialDingoes }, () => 10); // Dingoes start with energy of 10
+    grasshoppers = Array.from({ length: initialGrasshoppers }, () => 5); // Grasshoppers start with energy of 5
 
     if (!chart) setupChart();
 
@@ -169,12 +175,7 @@ function updateChart() {
 }
 
 function updateStats() {
-    const latestData = populationData[populationData.length - 1] || {
-        season: 0,
-        rabbits: 0,
-        dingoes: 0,
-        grasshoppers: 0,
-    };
+    const latestData = populationData[populationData.length - 1] || { season: 0, rabbits: 0, dingoes: 0, grasshoppers: 0 };
 
     document.getElementById('seasonDisplay').innerText = latestData.season;
     document.getElementById('rabbitCountDisplay').innerText = latestData.rabbits;
@@ -191,34 +192,15 @@ function setupChart() {
             datasets: [
                 { label: 'Rabbits', data: [], borderColor: 'green', borderWidth: 2 },
                 { label: 'Dingoes', data: [], borderColor: 'red', borderWidth: 2 },
-                { label: 'Grasshoppers', data: [], borderColor: 'orange', borderWidth: 2 },
-            ],
+                { label: 'Grasshoppers', data: [], borderColor: 'yellow', borderWidth: 2 }
+            ]
         },
         options: {
             responsive: true,
             scales: {
                 x: { title: { display: true, text: 'Season' } },
-                y: { title: { display: true, text: 'Population' } },
-            },
-        },
+                y: { title: { display: true, text: 'Population' } }
+            }
+        }
     });
-}
-
-// Toggle the settings modal
-function toggleSettings() {
-    const modal = document.getElementById('settingsModal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
-
-// Apply settings changes
-function applySettings() {
-    totalSeasons = parseInt(document.getElementById('totalSeasons').value);
-    rabbitDeathThreshold = parseInt(document.getElementById('rabbitDeathThreshold').value);
-    dingoDeathThreshold = parseInt(document.getElementById('dingoDeathThreshold').value);
-    grasshopperDeathThreshold = parseInt(document.getElementById('grasshopperDeathThreshold').value);
-    rabbitReproductionThreshold = parseInt(document.getElementById('rabbitReproductionThreshold').value);
-    dingoReproductionThreshold = parseInt(document.getElementById('dingoReproductionThreshold').value);
-
-    alert('Settings applied successfully!');
-    toggleSettings();
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -20,77 +22,87 @@
                 <div class="sliders">
                     <div class="slider">
                         <label for="grassGrowth">🌱 Grass Growth per Season:</label>
-                        <input type="range" id="grassGrowth" min="1" max="50" value="12" oninput="updateGrassGrowth(this.value)">
+                        <input type="range" id="grassGrowth" min="1" max="50" value="12"
+                            oninput="updateGrassGrowth(this.value)">
                         <span id="grassGrowthValue">12</span>
                     </div>
                     <div class="slider">
                         <label for="initialRabbits">🐇 Initial Rabbits:</label>
-                        <input type="range" id="initialRabbits" min="1" max="50" value="10" oninput="updateInitialRabbits(this.value)">
+                        <input type="range" id="initialRabbits" min="1" max="50" value="10"
+                            oninput="updateInitialRabbits(this.value)">
                         <span id="initialRabbitsValue">10</span>
                     </div>
                     <div class="slider">
                         <label for="initialDingoes">🐕 Initial Dingoes:</label>
-                        <input type="range" id="initialDingoes" min="1" max="50" value="5" oninput="updateInitialDingoes(this.value)">
+                        <input type="range" id="initialDingoes" min="1" max="50" value="5"
+                            oninput="updateInitialDingoes(this.value)">
                         <span id="initialDingoesValue">5</span>
                     </div>
                     <div class="slider">
                         <label for="initialGrasshoppers">🦗 Initial Grasshoppers:</label>
-                        <input type="range" id="initialGrasshoppers" min="1" max="50" value="10" oninput="updateInitialGrasshoppers(this.value)">
+                        <input type="range" id="initialGrasshoppers" min="1" max="50" value="10"
+                            oninput="updateInitialGrasshoppers(this.value)">
                         <span id="initialGrasshoppersValue">10</span>
+                    </div>
+                    <div class="slider">
+                        <label for="predationRate">🐕 Rabbits Predation Rate:</label>
+                        <input type="range" id="predationRate" min="0" max="17" value="8"
+                            oninput="updatePredationRate(this.value)">
+                        <span id="predationRateValue">8%</span>
+                    </div>
+                    <div class="slider">
+                        <label for="grasshopperPredationRate">🐇 Grasshopper Predation Rate:</label>
+                        <input type="range" id="grasshopperPredationRate" min="0" max="100" value="50"
+                            oninput="updateGrasshopperPredationRate(this.value)">
+                        <span id="grasshopperPredationRateValue">50%</span>
                     </div>
                 </div>
             </section>
 
+            <!-- Move button container above the chart -->
+            <div class="button-container">
+                <button id="startButton" onclick="startSimulation()">▶️ Start</button>
+                <button id="stopButton" onclick="stopSimulation()" style="display:none;">⏸️ Pause</button>
+                <button id="resetButton" onclick="resetSimulation()" style="display:none;">🔄 Reset</button>
+            </div>
+
             <section class="simulation">
-                <div class="button-container">
-                    <button id="startButton" onclick="startSimulation()">▶️ Start</button>
-                    <button id="stopButton" onclick="stopSimulation()" style="display:none;">⏸️ Pause</button>
-                    <button id="resetButton" onclick="resetSimulation()" style="display:none;">🔄 Reset</button>
-                    <button id="openSettings" onclick="toggleSettings()">⚙️ Advanced Settings</button>
-                </div>
                 <h2>📊 Population Dynamics</h2>
                 <canvas id="populationChart"></canvas>
             </section>
 
+            <!-- Detailed Stats Section -->
             <section class="stats">
                 <h2>📈 Statistics</h2>
                 <div class="stat"><span>🌿 Season:</span> <strong id="seasonDisplay">0</strong></div>
                 <div class="stat"><span>🐇 Rabbit Population:</span> <strong id="rabbitCountDisplay">0</strong></div>
                 <div class="stat"><span>🐕 Dingo Population:</span> <strong id="dingoCountDisplay">0</strong></div>
-                <div class="stat"><span>🦗 Grasshopper Population:</span> <strong id="grasshopperCountDisplay">0</strong></div>
+                <div class="stat"><span>🦗 Grasshopper Population:</span> <strong
+                        id="grasshopperCountDisplay">0</strong></div>
+                <!-- Add more detailed statistics here -->
+                <div class="stat"><span>🐇 Average Rabbit Energy:</span> <strong id="avgRabbitEnergyDisplay">0</strong>
+                </div>
+                <div class="stat"><span>🐕 Average Dingo Energy:</span> <strong id="avgDingoEnergyDisplay">0</strong>
+                </div>
+                <div class="stat"><span>🦗 Average Grasshopper Energy:</span> <strong
+                        id="avgGrasshopperEnergyDisplay">0</strong></div>
+                <div class="stat"><span>🐇 Rabbit Reproduction Rate:</span> <strong
+                        id="rabbitReproductionRateDisplay">0</strong></div>
+                <div class="stat"><span>🦗 Grasshopper Reproduction Rate:</span> <strong
+                        id="grasshopperReproductionRateDisplay">0</strong></div>
+            </section>
+
+            <!-- Performance Metrics -->
+            <section class="performance">
+                <h2>⚡ Performance</h2>
+                <div class="stat"><span>🕒 Time per Season:</span> <strong id="timePerSeason">0s</strong></div>
+                <div class="stat"><span>⏳ Total Simulation Time:</span> <strong id="totalSimulationTime">0s</strong>
+                </div>
             </section>
         </main>
     </div>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="toggleSettings()">&times;</span>
-            <h2>⚙️ Advanced Settings</h2>
-            <div class="settings">
-                <label for="totalSeasons">Total Seasons:</label>
-                <input type="number" id="totalSeasons" value="50" min="1">
-                
-                <label for="rabbitDeathThreshold">Rabbit Death Energy Threshold:</label>
-                <input type="number" id="rabbitDeathThreshold" value="3" min="0">
-
-                <label for="dingoDeathThreshold">Dingo Death Energy Threshold:</label>
-                <input type="number" id="dingoDeathThreshold" value="0" min="0">
-
-                <label for="grasshopperDeathThreshold">Grasshopper Death Energy Threshold:</label>
-                <input type="number" id="grasshopperDeathThreshold" value="2" min="0">
-
-                <label for="rabbitReproductionThreshold">Rabbit Reproduction Energy Threshold:</label>
-                <input type="number" id="rabbitReproductionThreshold" value="7" min="1">
-
-                <label for="dingoReproductionThreshold">Dingo Reproduction Energy Threshold:</label>
-                <input type="number" id="dingoReproductionThreshold" value="15" min="1">
-
-                <button onclick="applySettings()">Apply Changes</button>
-            </div>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
+
 </html>
